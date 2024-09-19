@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Система отзывов</title>
+    <!-- <script src="1.js" defer></script> -->
+    <script src="2.js" defer></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .review-container {
+        margin-bottom: 20px;
+      }
+      .reviews {
+        margin-top: 10px;
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+      }
+      .review-item {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Отзывы о продуктах</h1>
+
+    <!-- Контейнер для выбора продукта и добавления отзыва -->
+    <div>
+      <label for="product-select">Выберите продукт:</label>
+      <select id="product-select">
+        <option value="Apple iPhone 13">Apple iPhone 13</option>
+        <option value="Samsung Galaxy Z Fold 3">Samsung Galaxy Z Fold 3</option>
+        <option value="Sony PlayStation 5">Sony PlayStation 5</option>
+      </select>
+    </div>
+
+    <!-- Поле ввода отзыва -->
+    <div>
+      <label for="review-text">Ваш отзыв:</label>
+      <textarea id="review-text" rows="4" cols="50"></textarea>
+    </div>
+
+    <!-- Ошибка, если отзыв не подходит по длине -->
+    <div class="error" id="error-message"></div>
+
+    <!-- Кнопка для отправки -->
+    <div>
+      <button id="submit-review">Отправить отзыв</button>
+    </div>
+
+    <!-- Контейнер для отображения отзывов -->
+    <div id="reviews-container">
+      <!-- Здесь будут добавляться отзывы -->
+    </div>
+  </body>
+</html>
