@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отзывы о продуктах</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .review {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+        .product {
+            cursor: pointer;
+            font-weight: bold;
+            color: blue;
+            text-decoration: underline;
+        }
+        .delete-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Добавить отзыв</h1>
+        <label for="productName">Название продукта:</label><br>
+        <input type="text" id="productName" placeholder="Введите название продукта"><br><br>
+
+        <label for="productReview">Ваш отзыв:</label><br>
+        <textarea id="productReview" placeholder="Введите ваш отзыв"></textarea><br><br>
+
+        <button id="addReviewBtn">Добавить отзыв</button>
+
+        <h2>Просмотр отзывов</h2>
+        <div id="reviewsList"></div>
+    </div>
+
+    <script>
+        // Добавление отзыва
+        const addReviewBtn = document.getElementById('addReviewBtn');
+        const productNameInput = document.getElementById('productName');
+        const productReviewInput = document.getElementById('productReview');
+        const reviewsListDiv = document.getElementById('reviewsList');
+
+        // Функция для получения отзывов из LocalStorage
+        function getReviews() {
+            const reviews = localStorage.getItem('reviews');
+            return reviews ? JSON.parse(reviews) : {};
+        }
+
+        // Функция для сохранения отзывов в LocalStorage
+        function saveReviews(reviews) {
+            localStorage.setItem('reviews', JSON.stringify(reviews));
+        }
+
+        // Обработчик добавления отзыва
+        addReviewBtn.addEventListener('click', () => {
+            const productName = productNameInput.value.trim();
+            const productReview = productReviewInput.value.trim();
+
+            if (productName && productReview) {
+                let reviews = getReviews();
+
+                // Если для продукта уже есть отзывы, добавляем новый
+                if (reviews[productName]) {
+                    reviews[productName].push(productReview);
+                } else {
+                    reviews[productName] = [productReview];
+                }
+
+                saveReviews(reviews);
+                renderReviewsList();
+                productNameInput.value = '';
+                productReviewInput.value = '';
+            } else {
+                alert('Введите название продукта и отзыв.');
+            }
+        });
+
+        // Функция для отображения списка продуктов с отзывами
+        function renderReviewsList() {
+            reviewsListDiv.innerHTML = '';
+            const reviews = getReviews();
+
+            Object.keys(reviews).forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.classList.add('product');
+                productDiv.textContent = product;
+                
+                // При клике на продукт показываем отзывы
+                productDiv.addEventListener('click', () => {
+                    displayProductReviews(product);
+                });
+
+                reviewsListDiv.appendChild(productDiv);
+            });
+        }
+
+        // Функция для отображения отзывов по конкретному продукту
+        function displayProductReviews(productName) {
+            reviewsListDiv.innerHTML = `<h3>Отзывы о продукте: ${productName}</h3>`;
+            const reviews = getReviews();
+            const productReviews = reviews[productName];
+
+            productReviews.forEach((review, index) => {
+                const reviewDiv = document.createElement('div');
+                reviewDiv.classList.add('review');
+                reviewDiv.textContent = review;
+
+                // Кнопка для удаления отзыва
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Удалить';
+                deleteBtn.classList.add('delete-btn');
+                deleteBtn.addEventListener('click', () => {
+                    deleteReview(productName, index);
+                });
+
+                reviewDiv.appendChild(deleteBtn);
+                reviewsListDiv.appendChild(reviewDiv);
+            });
+
+            // Кнопка вернуться к списку продуктов
+            const backBtn = document.createElement('button');
+            backBtn.textContent = 'Вернуться';
+            backBtn.addEventListener('click', renderReviewsList);
+            reviewsListDiv.appendChild(backBtn);
+        }
+
+        // Функция для удаления отзыва
+        function deleteReview(productName, reviewIndex) {
+            let reviews = getReviews();
+            reviews[productName].splice(reviewIndex, 1);
+
+            // Если отзывов по продукту больше нет, удаляем сам продукт
+            if (reviews[productName].length === 0) {
+                delete reviews[productName];
+            }
+
+            saveReviews(reviews);
+            renderReviewsList();
+        }
+
+        // Отображаем список продуктов при загрузке страницы
+        renderReviewsList();
+    </script>
+</body>
+</html>
